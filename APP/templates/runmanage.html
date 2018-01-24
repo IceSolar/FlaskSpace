@@ -1,0 +1,289 @@
+{% extends 'base.html' %}
+
+{% block admin_content %}
+	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-table"></i> 运行配置</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="#"><i class="icon-home"></i> 项目配置</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+          <a href="{{ url_for("auth_option.run_mange") }}" class="bread-current">运行配置</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+
+          <!-- Table -->
+
+            <div class="row">
+        {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+              <div class="col-md-12">
+
+                <div class="widget">
+
+                <div class="widget-head">
+                  <div class="pull-left">
+        <form class="navbar-form navbar-left" role="search" method="POST">
+			<div class="form-group">
+                {{ form.project_id(class="form-control", placeholder="所属项目")  }}
+			</div>
+            <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            筛选
+                        </button>
+                    </div>
+                    <div class="form-group">
+               <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增配置</button>
+
+                    </div>
+		</form>
+                  </div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+
+                </div>
+
+                  <div class="widget-content">
+
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th>项目名称</th>
+                          <th>配置名</th>
+{#                          <th>运行时间</th>#}
+                          <th>运行类别</th>
+                          <th>配置属性</th>
+                            <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            {% if len_run_manage > 0 %}
+            {% for run_manage_info in run_manage_infos %}
+                        <tr>
+{#                        {{ url_for("auth_option.projectAPI_mange",id=project_value.id) }}#}
+                        <td>{{ project.query.get(run_manage_info.project_id).name }}</td>
+                        <td>{{ run_manage_info.plan_name }}</td>
+                         {% if run_manage_info.run_mode=='1' %}
+                          <td>项目运行</td>
+                            {% elif run_manage_info.run_mode=='2' %}
+                            <td>接口套件</td>
+                             {% else %}
+                             <td>用例套件</td>
+                            {% endif %}
+
+
+                            {% if run_manage_info.config_status=='true' %}
+                          <td><span class="label label-success">有效</span></td>
+                            {% else %}
+                            <td><span class="label label-danger">无效</span></td>
+                            {% endif %}
+                          <td>
+
+{#                              <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modaladdapi"><i class="icon-ok"></i>添加接口 </button>#}
+{#get_projectname_info('{{ url_for('auth_option.getproject_by_id', id=project_value.id) }}',{{ project_value.id }})#}
+                {% if run_manage_info.run_mode=='2' %}
+{#                <a class="btn btn-xs btn-success" title="设置接口" href="{{ url_for("auth_option.sort_api", plan_name=run_manage_info.plan_name ,projet_id=run_manage_info.project_id, run_model=run_manage_info.run_mode) }}">#}
+{#                                <i class="icon-ok"></i>#}
+{##}
+{#                          设置接口顺序</a>#}
+{#                            {% elif run_manage_info.run_mode=='2'%}#}
+                                    <a class="btn btn-xs btn-success" title="" href="{{ url_for("auth_option.sort_api", plan_name=run_manage_info.plan_name ,projet_id=run_manage_info.project_id, run_model=run_manage_info.run_mode) }}">
+                                <i class="icon-ok"></i>
+                                      添加接口</a>
+                    {% else %}
+                    <a class="btn btn-xs btn-success" title="" href="{{ url_for("auth_option.sort_case", project_id=run_manage_info.project_id, run_id=run_manage_info.id , api_id=api_id) }}">
+                                <i class="icon-ok"></i>
+                                      添加用例</a>
+                            {% endif %}
+
+
+                              <a class="btn btn-xs btn-warning" title="编辑配置" onclick="get_config_info('{{ url_for('auth_option.get_config_by_id', id=run_manage_info.id) }}',{{ run_manage_info.id }})">
+                                <i class="icon-pencil"></i>编辑配置
+                            </a>
+                              <a class="btn btn-xs btn-danger" title="" href="{{ url_for("auth_option.pausejob", job_id=run_manage_info.id ) }}">
+                                <i class="icon-remove"></i>
+                                      删除任务</a>
+{#                          <a class="btn btn-xs btn-success" title="" href="{{ url_for("auth_option.pausejob", job_id=run_manage_info.id ) }}">#}
+{#                                <i class="icon-ok"></i>#}
+{#                                      恢复任务</a>#}
+{##}
+{#                              <button class="btn btn-xs btn-warning"  data-toggle="modal" data-target="#modaleditproject"><i class="icon-pencil"></i>编辑项目 </button>#}
+                          </td>
+                        </tr>
+  {% endfor %}
+            {% else %}
+            <tr>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                        </tr>
+        {% endif %}
+                      </tbody>
+                    </table>
+
+                    <div class="widget-foot">
+
+
+                        <ul class="pagination pull-right">
+                          <li><a href="#">Prev</a></li>
+                          <li><a href="#">1</a></li>
+                          <li><a href="#">2</a></li>
+                          <li><a href="#">3</a></li>
+                          <li><a href="#">4</a></li>
+                          <li><a href="#">Next</a></li>
+                        </ul>
+
+                      <div class="clearfix"></div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        </div>
+		  </div>
+
+		<!-- Matter ends -->
+
+    </div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增运行配置
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                {{ url_for('loan.settle',apply_no=apply_no)}} #}
+            <form id="" method="POST" action={{ url_for('auth_option.add_run_mange')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                             {{ form2.project_id.label }}
+                                       {{ form2.project_id(class='form-control', placeholder="所属项目") }}
+                                  {{ form2.plan_name.label }}
+                                       {{ form2.plan_name(required='',class='form-control', placeholder="配置名", value='', id ='paln_name') }}
+{#                                  {{ form2.case_id.label }}#}
+{#                                       {{ form2.case_id(class='form-control', placeholder="用例ID", value='', id ='case_id') }}#}
+                                  {{ form2.run_time.label }}
+                                      {{ form2.run_time(required='',class="form-control", placeholder="运行时间", value='', id ='run_time') }}
+                                    {{ form2.run_mode.label }}
+                                    {{ form2.run_mode(id ='run_mode') }}
+                                  {{ form2.config_status.label }}
+                                    {{ form2.config_status(id ='config_status') }}
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+{##}
+    <div class="modal fade" id="modaleditconfig" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					编辑配置信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+            <form id="" method="POST" action={{ url_for('auth_option.editconfig_mange')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                             {{ form4.run_id(type='hidden',id='run_id4') }}
+
+                                  {{ form4.project_id.label }}
+                                      {{ form4.project_id(class="form-control", placeholder="项目URL",id ='project_id4') }}
+                                    {{ form4.plan_name.label }}
+                                    {{ form4.plan_name(required='',class='form-control', placeholder="配置名", value='', id ='plan_name4') }}
+{#                                      {{ form4.sort_id(class="form-control", placeholder="用例ID", value='', id ='case_id4') }}#}
+                            {{ form4.run_time.label }}
+                            {{ form4.run_time(required='',class='form-control', placeholder="运行时间配置", value='', id ='run_time4') }}
+                            {{ form4.run_mode.label }}
+                            <p id ='run_mode4'></p>
+                                    {{ form4.run_mode() }}
+                                  {{ form4.config_status.label }}
+                                    {{ form4.config_status(id ='config_status4') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+       <div class="modal fade" id="caselog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >
+	<div class="modal-dialog">
+		<div class="modal-content" style="width: auto">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					运行日志
+				</h4>
+			</div>
+
+			<div class="modal-body">
+                <ul id="addloginfo">
+
+                          </ul>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+{% endblock %}

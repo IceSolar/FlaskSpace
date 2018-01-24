@@ -1,0 +1,279 @@
+﻿<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
+  <meta charset="utf-8">
+  <!-- Title and other stuffs -->
+  <title>聚泛自动化用例管理平台</title>
+  <!-- Stylesheets -->
+  <link href="{{ url_for('static',filename='style/bootstrap.css') }}" rel="stylesheet">
+  <!-- Font awesome icon -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/font-awesome.css') }}">
+  <!-- jQuery UI -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/jquery-ui.css') }}">
+  <!-- Calendar -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/fullcalendar.css') }}">
+  <!-- prettyPhoto -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/prettyPhoto.css') }}">
+  <!-- Star rating -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/rateit.css') }}">
+  <!-- Date picker -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap-datetimepicker.min.css') }}">
+  <!-- CLEditor -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/jquery.cleditor.css') }}">
+  <!-- Uniform -->
+{#  <link rel="stylesheet" href="{{ url_for('static',filename='style/uniform.default.css') }}">#}
+  <!-- Bootstrap toggle -->
+  <link rel="stylesheet" href="{{ url_for('static',filename='style/bootstrap-switch.css') }}">
+  <!-- Main stylesheet -->
+  <link href="{{ url_for('static',filename='style/style.css') }}" rel="stylesheet">
+  <!-- Widgets stylesheet -->
+  <link href="{{url_for('static',filename='style/widgets.css') }}" rel="stylesheet">
+
+{#<link rel="stylesheet" href="http://cdn.static.runoob.com/libs/bootstrap/3.3.7/css/bootstrap.min.css">#}
+{#	<script src="http://cdn.static.runoob.com/libs/jquery/2.1.1/jquery.min.js"></script>#}
+
+  <!-- HTML5 Support for IE -->
+  <!--[if lt IE 9]>
+{#  <script src="{{url_for('static',filename='js/html5shim.js') }}"></script>#}
+  <![endif]-->
+
+  <!-- Favicon -->
+  <link rel="shortcut icon" href="{{url_for('static',filename='img/favicon/favicon.png') }}">
+</head>
+
+<body>
+
+<!-- Header starts -->
+  <header>
+    <div class="container">
+      <div class="row">
+
+        <!-- Logo section -->
+        <div class="col-md-4">
+          <!-- Logo. -->
+          <div class="logo">
+            <h1><a href="#"><img src="{{url_for('static',filename='img/logo.png')}}" style="width:147px;height:70px;">用例管理系统<span class="bold"></span></a></h1>
+            <p class="meta"></p>
+          </div>
+          <!-- Logo ends -->
+        </div>
+
+        <!-- Button section -->
+        <div class="col-md-4">
+        </div>
+
+        <!-- Data section -->
+
+        <div class="col-md-4">
+          <div class="header-data">
+
+
+        <div class="navbar-inner">
+            <!-- user dropdown starts -->
+        <ul class="nav navbar-nav pull-right">
+          <li class="dropdown pull-right">
+            <a data-toggle="dropdown" class="dropdown-toggle" href="#">
+              <i class="icon-user"></i> {{ session.username }} <b class="caret"></b>
+            </a>
+
+            <!-- Dropdown menu -->
+            <ul class="dropdown-menu">
+{#              <li><a href="#"><i class="icon-user"></i> 资料</a></li>#}
+{#              <li><a href="#"><i class="icon-cogs"></i> 设置</a></li>#}
+              <li><a href="{{ url_for('auth_login.logout') }}"><i class="icon-off"></i> 退出</a></li>
+            </ul>
+          </li>
+
+        </ul>
+
+        </div>
+
+          </div>
+        </div>
+
+      </div>
+    </div>
+  </header>
+
+<!-- Header ends -->
+
+<!-- Main content starts -->
+<div class="content">
+
+  	<!-- Sidebar -->
+    <div class="sidebar">
+        <!--- Sidebar navigation -->
+        <!-- If the main navigation has sub navigation, then add the class "has_sub" to "li" of main navigation. -->
+        <ul id="nav">
+          <!-- Main menu with font awesome icon -->
+          <li><a href="{{ url_for('auth_option.index') }}"><i class="icon-home"></i> 首页</a>
+            <!-- Sub menu markup
+            <ul>
+              <li><a href="#">Submenu #1</a></li>
+              <li><a href="#">Submenu #2</a></li>
+              <li><a href="#">Submenu #3</a></li>
+            </ul>-->
+          </li>
+          <li class="has_sub"><a href="#"><i class="icon-list-alt"></i> 项目配置  <span class="pull-right"><i class="icon-chevron-right"></i></span></a>
+            <ul>
+
+              <li><a href="{{ url_for("auth_option.project_mange") }}">项目管理</a></li>
+                <li><a href="{{ url_for("auth_option.run_mange") }}">运行配置</a></li>
+            </ul>
+          </li>
+          <li class="has_sub"><a href="#"><i class="icon-file-alt"></i> 接口配置 <span class="pull-right"><i class="icon-chevron-right"></i></span></a>
+            <ul>
+              <li><a href="{{ url_for("auth_option.projectAPI_mange",id=-1) }}">接口管理</a></li>
+              <li><a href="{{ url_for("auth_option.apicase_mange",id=-1,project_id=-1) }}">用例管理</a></li>
+            </ul>
+          </li>
+
+                      <li class="has_sub"><a href="#"><i class="icon-file-alt"></i> 其余配置 <span class="pull-right"><i class="icon-chevron-right"></i></span></a>
+            <ul>
+              <li><a href="{{ url_for("auth_option.config_mange") }}">全局变量配置</a></li>
+              <li><a href="{{ url_for("auth_option.setupteardown_mange") }}">前后置条件</a></li>
+            </ul>
+          </li>
+
+
+{#          <li><a href="{{ url_for("auth_option.debug_case",case_id=3  ) }}"><i class="icon-bar-chart"></i>测试</a></li>#}
+{#          <li><a href="tables.html"><i class="icon-table"></i>表格</a></li>#}
+{#          <li><a href="forms.html"><i class="icon-tasks"></i>表单</a></li>#}
+{#          <li><a href="ui.html"><i class="icon-magic"></i>UI图标</a></li>#}
+{#          <li><a href="calendar.html"><i class="icon-calendar"></i>日历</a></li>#}
+        </ul>
+    </div>
+
+            {% block admin_content %}
+            {% endblock %}
+   <div class="clearfix"></div>
+
+</div>
+<!-- Content ends -->
+
+<!-- Footer starts -->
+<footer>
+  <div class="container">
+    <div class="row">
+      <div class="col-md-12">
+            <!-- Copyright info -->
+            <p class="copy">Copyright &copy; 2017 | <a href="#">Shanghai Jufan.Ltd.co</a> </p>
+      </div>
+    </div>
+  </div>
+</footer> 	
+
+<!-- Footer ends -->
+
+<!-- Scroll to top -->
+<span class="totop"><a href="#"><i class="icon-chevron-up"></i></a></span> 
+
+<!-- JS -->
+<script src="{{url_for('static',filename='js/jquery.js') }}"></script> <!-- jQuery -->
+<script src="{{url_for('static',filename='js/bootstrap.js') }}"></script> <!-- Bootstrap -->
+<script src="{{url_for('static',filename='js/jquery-ui-1.9.2.custom.min.js') }}"></script> <!-- jQuery UI -->
+<script src="{{url_for('static',filename='js/fullcalendar.min.js') }}"></script> <!-- Full Google Calendar - Calendar -->
+<script src="{{url_for('static',filename='js/jquery.rateit.min.js') }}"></script> <!-- RateIt - Star rating -->
+<script src="{{url_for('static',filename='js/jquery.prettyPhoto.js') }}"></script> <!-- prettyPhoto -->
+
+<!-- jQuery Flot -->
+<script src="{{url_for('static',filename='js/excanvas.min.js') }}"></script>
+<script src="{{url_for('static',filename='js/jquery.flot.js') }}"></script>
+<script src="{{url_for('static',filename='js/jquery.flot.resize.js') }}"></script>
+<script src="{{url_for('static',filename='js/jquery.flot.pie.js') }}"></script>
+<script src="{{url_for('static',filename='js/jquery.flot.stack.js') }}"></script>
+
+<!-- jQuery Notification - Noty -->
+<script src="{{url_for('static',filename='js/jquery.noty.js') }}"></script> <!-- jQuery Notify -->
+<script src="{{url_for('static',filename='js/themes/default.js') }}"></script> <!-- jQuery Notify -->
+<script src="{{url_for('static',filename='js/layouts/bottom.js') }}"></script> <!-- jQuery Notify -->
+<script src="{{url_for('static',filename='js/layouts/topRight.js') }}"></script> <!-- jQuery Notify -->
+<script src="{{url_for('static',filename='js/layouts/top.js') }}"></script> <!-- jQuery Notify -->
+<!-- jQuery Notification ends -->
+
+<script src="{{url_for('static',filename='js/sparklines.js') }}"></script> <!-- Sparklines -->
+<script src="{{url_for('static',filename='js/jquery.cleditor.min.js') }}"></script> <!-- CLEditor -->
+<script src="{{url_for('static',filename='js/bootstrap-datetimepicker.min.js') }}"></script> <!-- Date picker -->
+<script src="{{url_for('static',filename='js/bootstrap-switch.min.js') }}"></script> <!-- Bootstrap Toggle -->
+<script src="{{url_for('static',filename='js/filter.js') }}"></script> <!-- Filter for support page -->
+<script src="{{url_for('static',filename='js/custom.js') }}"></script> <!-- Custom codes -->
+<script src="{{url_for('static',filename='js/charts.js') }}"></script> <!-- Charts & Graphs -->
+<script src="{{url_for('static',filename='js/auth.js') }}"></script>
+<!-- Script for this page -->
+{#<script src="{{url_for('static',filename='js/savecase.js') }}"></script>#}
+<script src="{{url_for('static',filename='js/saveapi.js') }}"></script>
+<script src="{{url_for('static',filename='js/sort.js') }}"></script>
+<script>
+    $(function () {
+    var sin = [], cos = [];
+    for (var i = 0; i < 14; i += 0.5) {
+        sin.push([i, Math.sin(i)]);
+        cos.push([i, Math.cos(i)]);
+    }
+
+    var plot = $.plot($("#curve-chart"),
+           [ { data: sin, label: "sin(x)"}, { data: cos, label: "cos(x)" } ], {
+               series: {
+                   lines: { show: true, fill: true},
+                   points: { show: true }
+               },
+               grid: { hoverable: true, clickable: true, borderWidth:0 },
+               yaxis: { min: -1.2, max: 1.2 },
+               colors: ["#1eafed", "#1eafed"]
+             });
+
+    function showTooltip(x, y, contents) {
+        $('<div id="tooltip">' + contents + '</div>').css( {
+            position: 'absolute',
+            display: 'none',
+            top: y + 5,
+            left: x + 5,
+            border: '1px solid #000',
+            padding: '2px 8px',
+            color: '#ccc',
+            'background-color': '#000',
+            opacity: 0.9
+        }).appendTo("body").fadeIn(200);
+    }
+
+    var previousPoint = null;
+    $("#curve-chart").bind("plothover", function (event, pos, item) {
+        $("#x").text(pos.x.toFixed(2));
+        $("#y").text(pos.y.toFixed(2));
+
+        if ($("#enableTooltip:checked").length > 0) {
+            if (item) {
+                if (previousPoint != item.dataIndex) {
+                    previousPoint = item.dataIndex;
+
+                    $("#tooltip").remove();
+                    var x = item.datapoint[0].toFixed(2),
+                        y = item.datapoint[1].toFixed(2);
+
+                    showTooltip(item.pageX, item.pageY,
+                                item.series.label + " of " + x + " = " + y);
+                }
+            }
+            else {
+                $("#tooltip").remove();
+                previousPoint = null;
+            }
+        }
+    });
+
+    $("#curve-chart").bind("plotclick", function (event, pos, item) {
+        if (item) {
+            $("#clickdata").text("You clicked point " + item.dataIndex + " in " + item.series.label + ".");
+            plot.highlight(item.series, item.datapoint);
+        }
+    });
+
+});
+
+/* Curve chart ends */
+</script>
+
+
+</body>
+</html>

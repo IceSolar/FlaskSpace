@@ -1,0 +1,382 @@
+{% extends 'base.html' %}
+{% import "_macros.html" as macros %}
+{% block admin_content %}
+	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-table"></i>接口管理</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="#"><i class="icon-home"></i>接口配置</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+          <a href="{{ url_for("auth_option.projectAPI_mange",id=-1) }}" class="bread-current">接口管理</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+
+          <!-- Table -->
+
+            <div class="row">
+        {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+              <div class="col-md-12">
+
+                <div class="widget">
+
+                <div class="widget-head">
+                  <div class="pull-left">
+        <form class="navbar-form navbar-left" role="search" method="POST">
+            <div class="form-group">
+            {{ form.project_id(required='',class='form-control', id ='project_id') }}
+                </div>
+			<div class="form-group">
+                {{ form.api_name(class="form-control", placeholder="接口名称", value='', id ='api_name')  }}
+			</div>
+            <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            筛选
+                        </button>
+                    </div>
+            <div class="form-group">
+               <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增接口</button>
+
+{#                        <button class="btn btn-primary"  onclick="get_projectname_info('{{ url_for('auth_option.getproject_by_id', id=project_id) }}',{{ project_id }})">#}
+{#                                添加接口#}
+{#                            </button>#}
+
+                    </div>
+		</form>
+                  </div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+
+                </div>
+
+                  <div class="widget-content">
+
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th>项目名</th>
+                            <th>接口名</th>
+                          <th>接口URL</th>
+                            <td>方法</td>
+{#                          <th>HEAD模板</th>#}
+{#                          <th>REQUEST模板</th>#}
+{#                          <th>RESPON模板</th>#}
+                            <th>操作人</th>
+                             <th>接口状态</th>
+                            <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            {% if len_projectapis > 0 %}
+            {% for api_value in projectapis %}
+                        <tr>
+                        <td>{{ project.query.get(api_value.project_id).name}} </td>
+                          <td><a href="{{ url_for("auth_option.apicase_mange",id=api_value.id,project_id=api_value.project_id) }}">{{ api_value.api_name }}</a></td>
+                          <td>{{ api_value.api_url }}</td>
+                            <td>{{ api_value.api_method }}</td>
+                          <td>{{ api_value.Operator_name }}</td>
+                            {% if api_value.api_status=='true' %}
+                          <td><span class="label label-success">有效</span></td>
+                            {% else %}
+                            <td><span class="label label-danger">无效</span></td>
+                            {% endif %}
+                          <td>
+
+{#                              <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modaladdapitest"><i class="icon-ok"></i>添加用例 </button>#}
+{#                              <button class="btn btn-xs btn-warning"  data-toggle="modal" data-target="#modaleditapi"><i class="icon-pencil"></i>编辑接口信息 </button>#}
+
+                              <a class="btn btn-xs btn-success" title="添加用例" onclick="get_projecapi_id('{{ url_for('auth_option.get_projectapi_id', project_id=api_value.project_id ,api_id=api_value.id) }}',{{ api_value.project_id, api_value.id }})">
+                                <i class="icon-ok"></i>添加用例
+                            </a>
+
+                              <a class="btn btn-xs btn-success" title="添加接口前后置条件" onclick="get_setup_info('{{ url_for('auth_option.get_setup_id', belong_id=2,id=api_value.id,project_id=api_value.project_id,api_id=api_value.id) }}',{{ api_value.id }})">
+                                <i class="icon-ok"></i>添加前后置条件
+                            </a>
+
+                              <a class="btn btn-xs btn-warning" title="修改项目" onclick="get_api_value('{{ url_for('auth_option.get_api_value',api_id=api_value.id) }}', {{ api_value.id }})">
+                                <i class="icon-pencil"></i>编辑接口
+                                  </a>
+{#                              <a class="btn btn-xs btn-warning" title="查看模板" onclick="">#}
+{#                                <i class="icon-pencil"></i>查看模板#}
+{#                                  </a>#}
+                          </td>
+                        </tr>
+  {% endfor %}
+            {% else %}
+            <tr>
+                        <td>~</td>
+                        <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                        </tr>
+        {% endif %}
+                      </tbody>
+                    </table>
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, endpoint, id=project_id) }}
+        </div>
+{#                    <div class="widget-foot">#}
+{##}
+{##}
+{#                        <ul class="pagination pull-right">#}
+{#                          <li><a href="#">Prev</a></li>#}
+{#                          <li><a href="#">1</a></li>#}
+{#                          <li><a href="#">2</a></li>#}
+{#                          <li><a href="#">3</a></li>#}
+{#                          <li><a href="#">4</a></li>#}
+{#                          <li><a href="#">Next</a></li>#}
+{#                        </ul>#}
+{##}
+{#                      <div class="clearfix"></div>#}
+{##}
+{#                    </div>#}
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        </div>
+		  </div>
+
+		<!-- Matter ends -->
+
+    </div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增接口信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                {{ url_for('loan.settle',apply_no=apply_no)}} #}
+            <form id="" method="POST" action={{ url_for('auth_option.add_projectapi')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+{#                                  {{ form2.project_id.label }}#}
+{#                                       {{ form2.project_id(class='form-control', id ='project_id', value=project_id) }}#}
+
+                            {{ form2.project_id.label }}
+                                       {{ form2.project_id(class='form-control', value=project_id) }}
+                                  {{ form2.api_name.label }}
+                                      {{ form2.api_name(required='',class="form-control", placeholder="接口名", value='', id ='api_name') }}
+                                    {{ form2.api_url.label }}
+                                    {{ form2.api_url(id ='api_url',class="form-control", placeholder="接口URL", value='', id ='api_name') }}
+                                  {{ form2.api_heard.label }}
+                                      {{ form2.api_heard(class="form-control", placeholder="头信息", value='', id ='api_heard') }}
+                             {{ form2.api_req.label }}
+                                      {{ form2.api_req(class="form-control", placeholder="请求模板", value='', id ='api_req') }}
+                             {{ form2.api_resp.label }}
+                                      {{ form2.api_resp(class="form-control", placeholder="响应模板", value='', id ='api_resp') }}
+                             {{ form2.api_method.label }}
+                                      {{ form2.api_method(id ='api_method') }}
+                            {{ form2.api_valid.label }}
+                                      {{ form2.api_valid(id ='api_status') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+<div class="modal fade" id="addapicase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增用例信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+            <form id="" method="POST" action={{ url_for('auth_option.add_case_by_apiid')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+{#                                  {{ form3.project_id.label }}#}
+                                       {{ form3.project_id(class='form-control', id ='project_id3') }}
+
+{#                                  {{ form3.api_id.label }}#}
+                                       {{ form3.api_id(class='form-control', id ='api_id3') }}
+
+{#                                  {{ form3.rely_case_id.label }}#}
+{#                                       {{ form3.rely_case_id(class='form-control', id ='rely_case_id3') }}#}
+
+                                  {{ form3.case_name.label }}
+                                      {{ form3.case_name(required='',class="form-control", placeholder="用例名称", value='', id ='case_name') }}
+{#                                {{ form3.case_head_add.label }}#}
+{#                                      {{ form3.case_head_add(class="form-control", placeholder="头信息", value='', id ='case_head_add') }}#}
+                                    {{ form3.case_req.label }}
+                                    {{ form3.case_req(id ='api_url',class="form-control", placeholder="请求参数", value='', id ='case_req') }}
+                                {{ form3.expect_result.label }}
+                                    {{ form3.expect_result(required='',class="form-control", placeholder="期望结果", value='', id ='expect_result') }}
+                             {{ form3.Extract_failed.label }}
+                                      {{ form3.Extract_failed(class="form-control", placeholder="提取返回结果", value='', id ='Extract_failed') }}
+
+                            {{ form3.case_valid.label }}
+                                      {{ form3.case_valid(id ='api_status') }}
+
+                            {{ form3.case_desc.label }}
+                                      {{ form3.Extract_failed(class="form-control", placeholder="用例描述", value='', id ='Extract_failed') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+<div class="modal fade" id="Modaleditapi" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					编辑接口信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                {{ url_for('loan.settle',apply_no=apply_no)}} {{ url_for('auth_option.edit_api')}} #}
+            <form id="" method="POST" action={{ url_for('auth_option.edit_api_mange')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form4.api_id(type='hidden',id='api_id4') }}
+                                  {{ form4.project_id.label }}
+                                       {{ form4.project_id(required='',class='form-control', id ='project_id4') }}
+                                  {{ form4.api_name.label }}
+                                      {{ form4.api_name(required='',class="form-control", placeholder="接口名", value='', id ='api_name4') }}
+                                    {{ form4.api_url.label }}
+                                    {{ form4.api_url(id ='api_url',class="form-control", placeholder="接口URL", value='', id ='api_url4') }}
+                                  {{ form4.api_heard.label }}
+                                      {{ form4.api_heard(class="form-control", placeholder="头信息", value='', id ='api_heard4') }}
+                             {{ form4.api_req.label }}
+                                      {{ form4.api_req(class="form-control", placeholder="请求模板", value='', id ='api_req4') }}
+                             {{ form4.api_resp.label }}
+                                      {{ form4.api_resp(class="form-control", placeholder="响应模板", value='', id ='api_resp4') }}
+                             {{ form4.api_method.label }}
+                                      {{ form4.api_method(id ='api_method4') }}
+                            {{ form4.api_valid.label }}
+                                      {{ form4.api_valid(id ='api_status4') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+
+    <div class="modal fade" id="addprosetup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增前后置信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                {{ url_for('loan.settle',apply_no=apply_no)}} #}
+{#                {{ url_for('auth_option.get_api_value',api_id=api_value.id) }}#}
+            <form id="" method="POST" action= {{ url_for('auth_option.add_api_setup')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form5.the_belong(type='hidden',id='the_belong5') }}
+                            {{ form5.project_id(type='hidden',id='project_id5') }}
+                            {{ form5.api_id(type='hidden',id='api_id5') }}
+                            {{ form5.setup_teardown_id(type='hidden',id='setup_teardown_id') }}
+{#                            {{ form5.setup_type.label }}#}
+{#                            {{ form5.setup_type(class='form-control',  id ='setup_type5') }}#}
+
+{#                                  {{ form4.project_url.label }}#}
+{#                                      {{ form4.project_url(required='',class="form-control", placeholder="项目URL", value='', id ='project_url4') }}#}
+                                    {{ form5.relay_id.label }}
+                                    {{ form5.relay_id(class='form-control',id ='relay_id5') }}
+                                  {{ form5.setup_pro.label }}
+                                      {{ form5.setup_pro(class="form-control", placeholder="备注信息", value='', id ='setup_pro5') }}
+                            {{ form5.teardown_pro.label }}
+                                      {{ form5.teardown_pro(class="form-control", placeholder="备注信息", value='', id ='teardown_pro5') }}
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+
+
+{% endblock %}

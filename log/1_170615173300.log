@@ -1,0 +1,14 @@
+2017-06-15 17:33:00 INFO :请求链接：http://t.jufandev.com:8081/PAOP/asset/user/login
+2017-06-15 17:33:00 INFO :请求方法：POST
+2017-06-15 17:33:00 INFO :请求头：{"Content-Type": "application/json;charset=UTF-8"}
+2017-06-15 17:33:00 INFO :请求参数：{
+    "userName": "admin",
+    "password": "123"
+}
+2017-06-15 17:33:00 INFO :请求返回结果：{
+    "status": "ERROR",
+    "code": 500,
+    "data": null,
+    "meta": null,
+    "message": "账号或者密码错误失败!"
+}

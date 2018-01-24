@@ -1,0 +1,192 @@
+{% extends 'base.html' %}
+
+{% block admin_content %}
+  	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-file-alt"></i> 用例调试</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="{{ url_for("auth_option.apicase_mange",id=-1,project_id=-1) }}"><i class="icon-home"></i> 用例管理</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+          <a href="#" class="bread-current">用例调试</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+          <div class="row">
+
+              {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+
+            <div class="col-md-12">
+
+              <div class="widget">
+                <div class="widget-head">
+                  <div class="pull-left">用例调试</div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+                </div>
+                <div class="widget-content">
+                <div class="padd">
+
+                    <!-- Profile form -->
+                    <div class="form profile">
+<!-- Edit profile form (not working)-->
+                    <form class="form-horizontal" role="form" method="POST" action="">
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="name1">项目名</label>
+                            <div class="col-lg-6">
+                                {{ project_info.name }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="email1">接口名</label>
+                            <div class="col-lg-6">
+                                {{ api_info.api_name }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="username2">接口--前置条件</label>
+                            <div class="col-lg-6">
+                           {{ form.api_setup_step(class="form-control", id ='api_setup_step', readOnly="true")  }}
+                            </div>
+                        </div>
+
+
+                         <div class="form-group">
+                            <label class="control-label col-lg-3" for="username2">接口-前置用例</label>
+                            <div class="col-lg-6">
+                           {{ form.api_relay_id(class="form-control", id ='api_setup_step')  }}
+                            </div>
+                        </div>
+
+
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="email1">用例名称</label>
+                            <div class="col-lg-6">
+                                {{ case_info.case_name }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                         <label class="control-label col-lg-3" for="telephone">host</label>
+                            <div class="col-lg-6">
+                            {{ form.host(type="text",class="form-control",id="host")  }}
+                            </div>
+                        </div>
+                        <div class="form-group">
+                         <label class="control-label col-lg-3" for="telephone">Api_url</label>
+                            <div class="col-lg-6">
+                            {{ form.api_url(class="form-control",id="Api_url")  }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">接口方法</label>
+                            <div class="col-lg-6">
+                                {{ form.api_method(class="form-control", id ='method')  }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="username2">用例--前置条件</label>
+                            <div class="col-lg-6">
+                           {{ form.case_setup_step(class="form-control", id ='case_setup_step', readOnly="true" )  }}
+                            </div>
+                        </div>
+
+                          <div class="form-group">
+                            <label class="control-label col-lg-3" for="username2">用例--前置用例</label>
+                            <div class="col-lg-6">
+                           {{ form.case_relay_id(class="form-control", id ='case_relay_id')  }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3">请求头</label>
+                            <div class="col-lg-6">
+                                {{ form.case_head(class="form-control", id ='case_head')  }}
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="city">请求参数</label>
+                            <div class="col-lg-6">
+{#                                value =case_info.case_req#}
+                                {{ form.case_req(class="form-control",id="case_req")}}
+
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="city">期望结果</label>
+                            <div class="col-lg-6">
+
+                                {{ form.expect_reslt(required='',class="form-control") }}
+                            </div>
+                        </div>
+
+                        <div class="form-group">
+                            <label class="control-label col-lg-3" for="city">后置条件</label>
+                            <div class="col-lg-6">
+                                {{ form.teardown_step(class="form-control", id ='teardown_step')}}
+                            </div>
+                        </div>
+
+                      <div class="form-group">
+                                             <!-- Buttons -->
+						<div class="col-lg-6 col-lg-offset-1">
+						<button type="submit" class="btn btn-success">保存</button>
+{#						<button type="reset" class="btn btn-default">调试</button>#}
+
+ <a class="btn btn-default" title="用例调试" onclick="run_case_id('{{ url_for('auth_option.run_case_debug', case_id=case_info.id, evo_type=form.host.data) }}',{{ case_info.id }})">
+						调试</a>
+                        </div>
+                      </div>
+                    </form>
+  </div>
+
+       <div class="row">
+
+                      <div class="col-md-12">
+                        <hr />
+                          <h2 class="modal-title" id="myModalLabel">
+					    运行日志
+				    </h2>
+                <ul id="addloginfo">
+
+                </ul>
+                      </div>
+
+                    </div>
+
+                  </div>
+                </div>
+              </div>
+
+            </div>
+          </div>
+        </div>
+		  </div>
+   </div>
+{% endblock %}

@@ -1,0 +1,201 @@
+{% extends 'base.html' %}
+
+{% block admin_content %}
+	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-table"></i>前后置配置管理</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="#"><i class="icon-home"></i>其余配置</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+{#            {{ url_for("auth_option.projectAPI_mange",id=-1) }}#}
+          <a href="" class="bread-current">前后置配置管理</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+
+          <!-- Table -->
+
+            <div class="row">
+        {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+              <div class="col-md-12">
+
+                <div class="widget">
+
+                <div class="widget-head">
+                  <div class="pull-left">
+        <form class="navbar-form navbar-left" role="search" method="POST">
+            <div class="form-group">
+            {{ form.the_belong(class='form-control', id ='the_belong') }}
+                </div>
+			<div class="form-group">
+                {{ form.name(class="form-control", placeholder="名称", value='', id ='name')  }}
+			</div>
+            <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            筛选
+                        </button>
+                    </div>
+		</form>
+                  </div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+
+                </div>
+
+                  <div class="widget-content">
+
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+                          <th>前后置所属</th>
+                          <th>所属名</th>
+                          <th>前置类型</th>
+                            <th>前置ID(JSON时有)</th>
+                            <td>前置数据</td>
+                            <td>后置数据</td>
+                            <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            {% if len_setup_teardown_infos > 0 %}
+            {% for setup_teardown_info in setup_teardown_infos %}
+                        <tr>
+                        {% if setup_teardown_info.the_belong == '1' %}
+                        <td>项目</td>
+                            <td>{{ project.query.get(setup_teardown_info.setup_teardown_id).name}}</td>
+                        {% elif setup_teardown_info.the_belong == '2' %}
+                        <td>接口</td>
+                            <td>{{ projectapi.query.get(setup_teardown_info.setup_teardown_id).api_name}}</td>
+                        {% else %}
+                        <td>用例</td>
+                            <td>{{ apicase.query.get(setup_teardown_info.setup_teardown_id).ccase_name}}</td>
+                        {% endif %}
+
+
+{#                          <td>{{ setup_teardown_info.setup_type }}</td>#}
+                        {% if setup_teardown_info.rely_id !=-1 %}
+                            <td>{{ apicase.query.get(setup_teardown_info.rely_id).case_name}}</td>
+                        {% else %}
+                        <td>无</td>
+                        {% endif %}
+                          <td>{{ setup_teardown_info.setup_pro }}</td>
+                        <td>{{ setup_teardown_info.teardown_pro }}</td>
+                          <td>
+
+                              <a class="btn btn-xs btn-warning" title="修改项目" onclick="edit_setup_info('{{ url_for('auth_option.get_setup_info', id=setup_teardown_info.id) }}',{{ setup_teardown_info.id }})">
+                                <i class="icon-pencil"></i>编辑接口
+                              </a>
+                          </td>
+                        </tr>
+  {% endfor %}
+            {% else %}
+            <tr>
+                        <td>~</td>
+                        <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                        </tr>
+        {% endif %}
+                      </tbody>
+                    </table>
+
+                    <div class="widget-foot">
+
+
+                        <ul class="pagination pull-right">
+                          <li><a href="#">Prev</a></li>
+                          <li><a href="#">1</a></li>
+                          <li><a href="#">2</a></li>
+                          <li><a href="#">3</a></li>
+                          <li><a href="#">4</a></li>
+                          <li><a href="#">Next</a></li>
+                        </ul>
+
+                      <div class="clearfix"></div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        </div>
+		  </div>
+		<!-- Matter ends -->
+    </div>
+
+<div class="modal fade" id="editprosetup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增前后置信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                 #}
+            <form id="" method="POST" action='{{ url_for('auth_option.editsetup_info')}}' >
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form2.SetupTearDown_id(type='hidden',id='SetupTearDown_id2') }}
+                            {{ form2.the_belong(type='hidden',id='the_belong2') }}
+                            {{ form2.project_id(type='hidden',id='project_id2') }}
+{#                            {{ form2.api_id(type='hidden',id='api_id2') }}#}
+                            {{ form2.setup_teardown_id(type='hidden',id='setup_teardown_id') }}
+{#                            {{ form2.setup_type.label }}#}
+{#                            {{ form2.setup_type(class='form-control',  id ='setup_type2') }}#}
+
+{#                                  {{ form4.project_url.label }}#}
+{#                                      {{ form4.project_url(required='',class="form-control", placeholder="项目URL", value='', id ='project_url4') }}#}
+                                    {{ form2.relay_id.label }}
+                                    {{ form2.relay_id(class='form-control',id ='relay_id2') }}
+                                  {{ form2.setup_pro.label }}
+                                      {{ form2.setup_pro(class="form-control", placeholder="前置条件", value='', id ='setup_pro2') }}
+                            {{ form2.teardown_pro.label }}
+                                      {{ form2.teardown_pro(class="form-control", placeholder="后置条件", value='', id ='teardown_pro2') }}
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+
+{% endblock %}

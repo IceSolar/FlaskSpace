@@ -1,0 +1,443 @@
+{% extends 'base.html' %}
+{% import "_macros.html" as macros %}
+{% block admin_content %}
+	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-table"></i>用例管理</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="#"><i class="icon-home"></i> 接口配置</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+          <a href="{{ url_for("auth_option.apicase_mange",id=-1,project_id=-1) }}" class="bread-current">用例管理</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+
+          <!-- Table -->
+
+            <div class="row">
+        {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+              <div class="col-md-12">
+
+                <div class="widget">
+
+                <div class="widget-head">
+                  <div class="pull-left">
+                      <div style="display:none" id="cases_ids">{{ cases_ids }} </div>
+        <form class="navbar-form navbar-left" role="search" method="POST">
+			<div class="form-group">
+                {{ form.project_id(class="form-control", id ='api_name')  }}
+			</div>
+            <div class="form-group">
+                {{ form.api_id(class="form-control", id ='api_name')  }}
+			</div>
+            <div class="form-group">
+                        <button type="submit" class="btn btn-primary">
+                            筛选
+                        </button>
+                    </div>
+                    <div class="form-group">
+               <button class="btn btn-primary" data-toggle="modal" data-target="#myModal">新增用例</button>
+{#                        <button class="btn btn-primary" type="button"  id="rundebugcase">用例调试</button>#}
+                    </div>
+		</form>
+                  </div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+
+                </div>
+
+                  <div class="widget-content">
+        <form class="delete-articles" id="rundebugForm" method="post">
+
+                {{ form4.case_ids(type='hidden', value='') }}
+                    <table class="table table-striped table-bordered table-hover">
+                      <thead>
+                        <tr>
+{#                            <th class="table-checkbox-or-left"><input type="checkbox" id="select-all">全选</th>#}
+                            <th>ID</th>
+                          <th>项目</th>
+                            <th>接口名称</th>
+                          <th>用例名称</th>
+                            <th>操作人</th>
+                             <th>接口状态</th>
+                            <th>排序</th>
+                            <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            {% if len_apicases > 0 %}
+            {% for case_value in apicases %}
+                        <tr>
+{#                        <td class="table-checkbox-or-left"><input  name="sortcase" type="checkbox" class="op_check" value="{{ case_value.id }}"></td>#}
+                        <td>{{ case_value.id }}</td>
+                            {% if case_value.api_id ==-1 %}
+                        <td>无</td>
+                                <td>无</td>
+                        {% else %}
+                        <td>{{ project.query.get(projectapi.query.get(case_value.api_id).project_id).name }} </td>
+                                <td>{{ projectapi.query.get(case_value.api_id).api_name}}</td>
+                        {% endif %}
+                            <td>{{ case_value.case_name }}</td>
+
+                          <td>{{ case_value.Operator_name }}</td>
+                            {% if case_value.case_status=='true' %}
+                          <td><span class="label label-success">有效</span></td>
+                            {% else %}
+                            <td><span class="label label-danger">无效</span></td>
+                            {% endif %}
+                        <td class="ui-widget-content"><a href="#" onclick="check(this,'MoveUp')">上移</a>&nbsp;&nbsp;<a href="#" onclick="check(this,'MoveDown')">下移</a></td>
+                          <td>
+
+                               <a class="btn btn-xs btn-warning" title="用例详情" onclick="get_case_info('{{ url_for('auth_option.get_case_value', case_id=case_value.id) }}',{{ case_value.id }})">
+                                <i class="icon-pencil"></i>用例详情</a>
+
+
+{#                              <button data-toggle="collapse" class="btn btn-xs btn-primary" data-target="#modaladdapitest"><i class="icon-ok"></i>用例详情 </button>#}
+                              <a class="btn btn-xs btn-success" title="添加接口前后置条件" onclick="get_setup_info('{{ url_for('auth_option.get_setup_id', belong_id=3,id=case_value.id,project_id=case_value.project_id,api_id=case_value.api_id) }}')">
+                                <i class="icon-ok"></i>添加前后置条件
+                            </a>
+
+
+                              <a class="btn btn-xs btn-warning" title="编辑用例" onclick="get_case_value('{{ url_for('auth_option.get_case_value', case_id=case_value.id) }}',{{ case_value.id }})">
+                                <i class="icon-pencil"></i>编辑用例</a>
+                              <a class="btn btn-xs btn-success" title="用例调试" href="{{ url_for('auth_option.debug_case', case_id=case_value.id) }}">
+                                <i class="icon-pencil"></i>用例调试
+                            </a>
+                          </td>
+                        </tr>
+
+
+
+
+  {% endfor %}
+
+
+            {% else %}
+            <tr>
+                          <td>~</td>
+                          <td>~</td>
+                        <td>~</td>
+                        <td>~</td>
+                        <td>~</td>
+                          <td>~</td>
+                        <td>~</td>
+                          <td>~</td>
+                        </tr>
+        {% endif %}
+                      </tbody>
+                    </table>
+</form>
+{#                    <div class="widget-foot">#}
+{##}
+{##}
+{#                        <ul class="pagination pull-right">#}
+{#                          <li><a href="#">Prev</a></li>#}
+{#                          <li><a href="#">1</a></li>#}
+{#                          <li><a href="#">2</a></li>#}
+{#                          <li><a href="#">3</a></li>#}
+{#                          <li><a href="#">4</a></li>#}
+{#                          <li><a href="#">Next</a></li>#}
+{#                        </ul>#}
+{#                      <div class="clearfix"></div>#}
+{##}
+{#                    </div>#}
+
+        <div class="pagination">
+            {{ macros.pagination_widget(pagination, endpoint, id=api_id, project_id=project_id) }}
+        </div>
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        </div>
+		  </div>
+
+		<!-- Matter ends -->
+
+    </div>
+
+
+
+<div class="modal fade" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增用例信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+            <form id="" method="POST" action={{ url_for('auth_option.add_apicase')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                                  {{ form2.project_id.label }}
+                                       {{ form2.project_id(required='',class='form-control', id ='project_id') }}
+
+                                  {{ form2.api_id.label }}
+                                       {{ form2.api_id(required='',class='form-control', id ='api_id') }}
+
+{#                                  {{ form2.rely_case_id.label }}#}
+{#                                       {{ form2.rely_case_id(required='',class='form-control', id ='rely_case_id') }}#}
+
+                                  {{ form2.case_name.label }}
+                                      {{ form2.case_name(required='',class="form-control", placeholder="用例名称", value='', id ='case_name') }}
+{#                                {{ form2.case_head_add.label }}#}
+{#                                      {{ form2.case_head_add(class="form-control", placeholder="头信息", value='', id ='case_head_add') }}#}
+                                    {{ form2.case_req.label }}
+                                    {{ form2.case_req(required='',class="form-control", placeholder="请求参数", value='', id ='case_req') }}
+                                {{ form2.expect_result.label }}
+                                    {{ form2.expect_result(required='',class="form-control", placeholder="期望结果", value='', id ='expect_result') }}
+                             {{ form2.Extract_failed.label }}
+                                      {{ form2.Extract_failed(class="form-control", placeholder="提取返回结果", value='', id ='Extract_failed') }}
+
+                            {{ form2.case_valid.label }}
+                                      {{ form2.case_valid(id ='api_status') }}
+
+                            {{ form2.case_desc.label }}
+                                      {{ form2.Extract_failed(class="form-control", placeholder="用例描述", value='', id ='Extract_failed') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+    <div class="modal fade" id="APICaseValue" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					用例详情
+				</h4>
+			</div>
+
+			<div class="modal-body">
+
+
+                  <table class="table table-striped table-bordered table-hover" style="word-break:break-all;">
+                      <tr>
+                      <td>用例名称</td>
+                      <td id="case_name11"></td>
+                    </tr>
+                    <tr>
+                      <td>接口名称</td>
+                      <td id="api_name11"></td>
+                    </tr>
+                    <tr>
+                      <td>url</td>
+                      <td id="case_url11"></td>
+                    </tr>
+                    <tr>
+                      <td>请求方法</td>
+                      <td id="case_method11"></td>
+                    </tr>
+                    <tr>
+                      <td>请求头</td>
+                      <td id="case_headl11"></td>
+                    </tr>
+
+                      <tr>
+                      <td>请求参数</td>
+                      <td id="case_req11" width="50%"></td>
+                    </tr>
+                      <tr>
+                      <td>返回值格式</td>
+                      <td id="case_resp11" width="50%"></td>
+                    </tr>
+
+                    <tr>
+                      <td>期望结果</td>
+                      <td id="expect_result11" width="50%></td>
+                    </tr>
+                    <tr>
+                      <td>中间值提取</td>
+                      <td id="Extract_failed11"></td>
+                    </tr>
+                  </table>
+
+                  <div class="widget-foot">
+                  </div>
+                </div>
+              </div>
+            </div>
+
+
+  </div>
+
+
+
+
+
+
+
+
+
+
+
+<div class="modal fade" id="ModaleditAPICase" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					编辑用例
+				</h4>
+			</div>
+
+			<div class="modal-body">
+            <form id="" method="POST" action={{ url_for('auth_option.edit_case_mange')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form3.case_id(type='hidden',id='case_id3') }}
+                                  {{ form3.project_id.label }}
+                                       {{ form3.project_id(required='',class='form-control', id ='project_id3') }}
+
+                                  {{ form3.api_id.label }}
+                                       {{ form3.api_id(required='',class='form-control', id ='api_id3') }}
+
+{#                                  {{ form3.rely_case_id.label }}#}
+{#                                       {{ form3.rely_case_id(required='',class='form-control', id ='rely_case_id3') }}#}
+
+                                  {{ form3.case_name.label }}
+                                      {{ form3.case_name(required='',class="form-control", placeholder="用例名称", value='', id ='case_name3') }}
+{#                                {{ form3.case_head_add.label }}#}
+{#                                      {{ form3.case_head_add(class="form-control", placeholder="头信息", value='', id ='case_head_add3') }}#}
+                                    {{ form3.case_req.label }}
+                                    {{ form3.case_req(required='',class="form-control", placeholder="请求参数", value='', id ='case_req3') }}
+                            {{ form3.expect_result.label }}
+                            {{ form3.expect_result(required='',class="form-control", placeholder="请求参数", value='', id ='expect_result3') }}
+                             {{ form3.Extract_failed.label }}
+                                      {{ form2.Extract_failed(class="form-control", placeholder="提取返回结果", value='', id ='Extract_failed3') }}
+
+                            {{ form3.case_valid.label }}
+                                      {{ form3.case_valid(id ='case_valid3') }}
+
+                            {{ form3.case_desc.label }}
+                                      {{ form3.Extract_failed(class="form-control", placeholder="用例描述", value='', id ='case_desc3') }}
+
+
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+        <div class="modal fade" id="addprosetup" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+	<div class="modal-dialog">
+		<div class="modal-content">
+			<div class="modal-header">
+				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+					&times;
+				</button>
+				<h4 class="modal-title" id="myModalLabel">
+					新增前后置信息
+				</h4>
+			</div>
+
+			<div class="modal-body">
+{#                {{ url_for('loan.settle',apply_no=apply_no)}} #}
+            <form id="" method="POST" action= {{ url_for('auth_option.add_api_setup')}}>
+                <div class="modal-body">
+                        <div class="form-group">
+                            {{ form5.the_belong(type='hidden',id='the_belong5') }}
+                            {{ form5.project_id(type='hidden',id='project_id5') }}
+                            {{ form5.api_id(type='hidden',id='api_id5') }}
+                            {{ form5.setup_teardown_id(type='hidden',id='setup_teardown_id') }}
+{#                            {{ form5.setup_type.label }}#}
+{#                            {{ form5.setup_type(class='form-control',  id ='setup_type5') }}#}
+
+{#                                  {{ form4.project_url.label }}#}
+{#                                      {{ form4.project_url(required='',class="form-control", placeholder="项目URL", value='', id ='project_url4') }}#}
+                                    {{ form5.relay_id.label }}
+                                    {{ form5.relay_id(class='form-control',id ='relay_id5') }}
+                                  {{ form5.setup_pro.label }}
+                                      {{ form5.setup_pro(class="form-control", placeholder="备注信息", value='', id ='setup_pro5') }}
+                            {{ form5.teardown_pro.label }}
+                                      {{ form5.teardown_pro(class="form-control", placeholder="备注信息", value='', id ='teardown_pro5') }}
+                        </div>
+                    <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">关闭</button>
+                    <button type="submit" class="btn btn-success">确定</button>
+                </div>
+                </div>
+            </form>
+			</div>
+
+		</div><!-- /.modal-content -->
+	</div><!-- /.modal -->
+</div>
+
+
+
+{##}
+{#    <div class="modal fade" id="caselog" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true" >#}
+{#	<div class="modal-dialog">#}
+{#		<div class="modal-content" style="width: auto">#}
+{#			<div class="modal-header">#}
+{#				<button type="button" class="close" data-dismiss="modal" aria-hidden="true">#}
+{#					&times;#}
+{#				</button>#}
+{#				<h4 class="modal-title" id="myModalLabel">#}
+{#					运行日志#}
+{#				</h4>#}
+{#			</div>#}
+{##}
+{#			<div class="modal-body">#}
+{#                <ul id="addloginfo">#}
+{##}
+{#                          </ul>#}
+{#			</div>#}
+{##}
+{#		</div><!-- /.modal-content -->#}
+{#	</div><!-- /.modal -->#}
+{#</div>#}
+
+{% endblock %}

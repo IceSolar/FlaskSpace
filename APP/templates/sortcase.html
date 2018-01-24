@@ -1,0 +1,147 @@
+{% extends 'base.html' %}
+
+{% block admin_content %}
+	<div class="mainbar">
+
+      <!-- Page heading -->
+      <div class="page-head">
+        <h2 class="pull-left"><i class="icon-table"></i> 用例执行顺序配置</h2>
+
+        <!-- Breadcrumb -->
+        <div class="bread-crumb pull-right">
+          <a href="{{ url_for("auth_option.run_mange") }}"><i class="icon-home"></i> 项目配置</a>
+          <!-- Divider -->
+          <span class="divider">/</span>
+          <a href="#" class="bread-current">用例执行顺序</a>
+        </div>
+
+        <div class="clearfix"></div>
+
+      </div>
+      <!-- Page heading ends -->
+
+	    <!-- Matter -->
+
+	    <div class="matter">
+        <div class="container">
+
+          <!-- Table -->
+
+            <div class="row">
+                <div id="successAlert" class="alert alert-success" style="display:none;">
+        <button  type="button" class="close" data-dismiss="alert">
+        ×
+        </button>
+        <p id="msginfo_sucess"></p>
+    </div>
+	<div id="errorAlert" class="alert alert-danger" style="display:none;" >
+        <button  type="button" class="close" data-dismiss="alert">
+        ×
+        </button>
+        <p id="msginfo_error"></p>
+    </div>
+
+
+            {% for message in get_flashed_messages(with_categories=True) %}
+                    <div class="alert alert-{{ message[0] }}">
+                     <button type="button" class="close" data-dismiss="alert">&times;</button>{{ message[1] }}
+                    </div>
+                    {% endfor %}
+              <div class="col-md-12">
+
+                <div class="widget">
+
+                <div class="widget-head">
+                  <div class="pull-left">
+                      <div style="display:none" id="api_id">{{ api_id }} </div>
+                      <div style="display:none" id="run_id">{{ run_id }} </div>
+                        <div style="display:none" id="run_mode">{{ run_mode }} </div>
+                      <div style="display:none" id="cases_ids">{{ cases_ids }} </div>
+{#                      <button class="btn btn-primary" id="btncase">保存用例顺序</button>#}
+                      <button class="btn btn-primary" id="addsortcase">保存添加</button>
+                  </div>
+                  <div class="widget-icons pull-right">
+                    <a href="#" class="wminimize"><i class="icon-chevron-up"></i></a>
+                    <a href="#" class="wclose"><i class="icon-remove"></i></a>
+                  </div>
+                  <div class="clearfix"></div>
+
+                </div>
+
+                  <div class="widget-content">
+        <form class="delete-articles" id="addcaseForm" method="post">
+
+                {{ form.case_ids(type='hidden', value='') }}
+                    <table class="table table-striped table-bordered table-hover" id="history_income_list">
+                      <thead>
+                        <tr>
+                            <th class="table-checkbox-or-left"><input type="checkbox" id="select-all">全选</th>
+                            <th>用例ID</th>
+                          <th>项目名称</th>
+                          <th>接口名称</th>
+                          <th>用例名称</th>
+{#                            <th>前置条件</th>#}
+                          <th>操作</th>
+                        </tr>
+                      </thead>
+                      <tbody>
+            {% if len_apicases > 0 %}
+            {% for apicase_value in apicases %}
+                        <tr>
+                            <td class="table-checkbox-or-left"><input  name="sortcase" type="checkbox" class="op_check" value="{{ apicase_value.id }}"></td>
+                        <td>{{ apicase_value.id }}</td>
+                          <td>{{ project.query.get(apicase_value.project_id).name }}</td>
+                            <td>{{ projectapi.query.get(apicase_value.api_id).api_name }} </td>
+                          <td><a href="">{{ apicase_value.case_name }}</a></td>
+{#                            <td>{{ apicase.query.get(apicase_value.rely_case_id).case_name }}</td>#}
+{#                              <button class="btn btn-xs btn-success"  data-toggle="modal" data-target="#modaladdapi"><i class="icon-ok"></i>添加接口 </button>#}
+{#                        <td class="ui-widget-content"><a href="#" onclick="check(this,'MoveUpCase')">上移</a>&nbsp;&nbsp;<a href="#" onclick="check(this,'MoveDownCase')">下移</a></td>#}
+{#                        projet_id#}
+                        <td class="ui-widget-content"><a href="#" onclick="check(this,'MoveUp')">上移</a>&nbsp;&nbsp;<a href="#" onclick="check(this,'MoveDown')">下移</a></td>
+                        </tr>
+  {% endfor %}
+            {% else %}
+            <tr>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                          <td>~</td>
+                        </tr>
+        {% endif %}
+                      </tbody>
+                    </table>
+</form>
+                    <div class="widget-foot">
+
+
+{#                        <ul class="pagination pull-right">#}
+{#                          <li><a href="#">Prev</a></li>#}
+{#                          <li><a href="#">1</a></li>#}
+{#                          <li><a href="#">2</a></li>#}
+{#                          <li><a href="#">3</a></li>#}
+{#                          <li><a href="#">4</a></li>#}
+{#                          <li><a href="#">Next</a></li>#}
+{#                        </ul>#}
+
+                      <div class="clearfix"></div>
+
+                    </div>
+
+                  </div>
+
+                </div>
+
+              </div>
+
+            </div>
+
+        </div>
+		  </div>
+
+		<!-- Matter ends -->
+
+    </div>
+
+
+{% endblock %}

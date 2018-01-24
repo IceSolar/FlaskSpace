@@ -1,0 +1,241 @@
+{% import "_macros.html" as macros %}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>聚泛自动化测试</title>
+   <link href="{{ url_for('static',filename='css/bootstrap.min.css') }}" rel="stylesheet">
+   <script src="{{url_for('static',filename='js/jquery.js') }}"></script>
+   <script src="{{url_for('static',filename='js/bootstrap.js') }}"></script>
+    <script src="{{url_for('static',filename='js/bootstrap-table-expandable.js') }}"></script>
+    <link rel="stylesheet" href="{{url_for('static',filename='css/bootstrap-table-expandable.css') }} ">
+{#    <link rel="stylesheet" href="{{url_for('static',filename='css/default.css') }}">#}
+    <link rel="stylesheet" href="{{url_for('static',filename='css/s.css') }}">
+	<!-- INCLUDES -->
+
+</head>
+
+<body>
+<nav class="navbar navbar-default" role="navigation">
+   <div class="navbar-header">
+
+      <a href="{{ url_for("report.report")}}"><img src="{{url_for('static',filename='img/logo.png')}}" style="width:147px;height:60px;"></a>
+   </div>
+{#   <div>  #}
+{#      <p class="navbar-text">导航栏中的文本</p>  #}
+{#   </div>  #}
+   <div>
+      <p class="navbar-text navbar-right">
+         <a href="{{ url_for("auth_login.login") }}" class="navbar-link">登录后台</a>
+      </p>
+   </div>
+   <div>
+      <ul class="nav navbar-nav">
+        {% for project_info in project_infos  %}
+         <li>
+            <a href="{{ url_for("report.report_info",project_id=project_info[0])}}">
+               {{ project_info[1] }}
+            </a>
+{#            <ul class="dropdown-menu">#}
+{#                {% for api_infos in projectapi.query.filter_by(project_id=project_info[0]) %}#}
+{#                    {{ url_for("build_report.api_result",project_id=project_info[0],api_id=api_infos.id) }}#}
+{#               <li><a href="{{ url_for("build_report.report_info",project_id=project_info[0],api_id=api_infos.id) }}">{{ api_infos.api_name }}</a></li>#}
+{#                {% endfor %}#}
+{#            <li><a href="{{ url_for("build_report.report_info",project_id=project_info[0],api_id=-1) }}">全部</a></li>#}
+{#            </ul>#}
+         </li>
+      {% endfor %}
+      </ul>
+   </div>
+</nav>
+<div class="container">
+    <div class="row">
+        <div class="page-header">
+            {% if project_name %}
+            <h1>{{project_name}} -- 接口测试报告
+                <small>Design By QA</small>
+            </h1>
+            {% else %}
+            <h1>接口测试报告
+                <small>Design By QA</small>
+            </h1>
+            {% endif %}
+        </div>
+    </div>
+    <div class="row">
+        <div class="col-md-4">
+            <h3>测试通过 <span class="label label-success">
+                {{ success }}
+            </span></h3>
+        </div>
+        <div class="col-md-4">
+            <h3>测试失败 <span class="label label-danger">{{ fail }}</span></h3>
+        </div>
+        <div class="col-md-4">
+            <h3>无结果 <span class="label label-warning">{{ other }}</span></h3>
+        </div>
+    </div>
+    <p></p>
+    <div class="row">
+        <div class="col-md-3">
+            <ul class="list-group">
+            </ul>
+        </div>
+        <div class="col-md-9">
+                <div class="panel-group" id="accordion">
+
+
+            <div class="panel-heading">
+                <h4 class="panel-title">
+                    <a data-toggle="collapse" href="">
+                    </a>
+                </h4>
+            </div>
+            <div  class="panel-collapse collapse">
+                <div class="panel-body">
+                    <b></b><br>
+                    <br>
+
+                    <hr>
+                </div>
+            </div>
+            </div>
+            </div>
+                <p></p>
+            </div>
+
+
+    <div class="row">
+			<table class="table table-hover table-expandable"  style="word-break:break-all;" id ="tablecase">
+                <thead>
+                    <tr>
+                        <th>接口名</th>
+                        <th>用例标题</th>
+                        <th>请求方法</th>
+                        <th>运行时间</th>
+                        <th>运行结果</th>
+                    </tr>
+                </thead>
+				<tbody >
+     {% for case_result in case_results %}
+					<tr>
+						<td>{{ case_result.api_name }}</td>
+						<td>{{ case_result.case_name }}</td>
+                        <td>{{ case_result.method }}</td>
+                        <td>{{ case_result.run_time }}</td>
+                         {% if case_result.run_result=='success' %}
+                          <td><span class="label label-success">pass</span></td>
+                            {% else %}
+                            <td><span class="label label-danger">{{ case_result.run_result }}</span></td>
+                            {% endif %}
+					</tr>
+					<tr>
+
+                    <td colspan="6" id="each_case">
+
+                    <div class="list-group">
+    <a  class="list-group-item">
+        <h4 class="list-group-item-heading">请求url:</h4>
+        <div id="canvas_value">{{ case_result.request_url }}</div>
+{#        <p class="list-group-item-text"></p>#}
+    </a>
+    <a  class="list-group-item">
+        <h4 class="list-group-item-heading">请求head:</h4>
+        <div id="canvas_value" >{{ case_result.head}}</div>
+{#        <p class="list-group-item-text"></p>#}
+    </a>
+                            <a  class="list-group-item">
+        <h4 class="list-group-item-heading">请求参数:</h4>
+        <div id="canvas_value" >{{case_result.params}}</div>
+{#        <p class="list-group-item-text"></p>#}
+    </a>
+       <a  class="list-group-item">
+        <h4 class="list-group-item-heading">返回结果:  </h4>
+           <div id="canvas_value">{{ case_result.respon }}</div>
+{#            <p class="Canvas" id="RawJson"></p>#}
+{#           <input type="text" name="name" id="nn" value="{{ case_result.respon }}"/>#}
+{#           {{ case_result.respon }}#}
+
+
+{#        <input type="Button" value="格式化" "/>#}
+    </a>
+                                                    <a  class="list-group-item">
+        <h4 class="list-group-item-heading">期望结果:</h4>
+         <div id="canvas_value">{{ case_result.expect_result}}</div>
+{#        <p class="list-group-item-text"></p>#}
+    </a>
+                      {% if case_result.run_result =='fail' %}
+                                                    <a  class="list-group-item">
+        <h4 class="list-group-item-heading">失败原因:</h4>
+          <div id="canvas_value">{{ case_result.result_reason}}</div>
+{#        <p class="list-group-item-text">{{ case_result.result_reason}}</p>#}
+    </a>
+                        {% endif %}
+</div>
+
+						</td>
+
+					</tr>
+{% endfor %}
+				</tbody>
+            </table>
+		</div>
+<div class="pagination">
+    {% if endpoint == '.index' %}
+        {{ macros.pagination_widget(pagination, endpoint) }}
+    {% else %}
+        {{ macros.pagination_widget(pagination, endpoint, project_id=project_id) }}
+    {% endif %}
+    </div>
+
+            </div>
+        </div>
+        <script>
+            $(function () {
+                $(window).scroll(function () {
+                    if ($(this).scrollTop() != 0) {
+                        $("#toTop").fadeIn();
+                    } else {
+                        $("#toTop").fadeOut();
+                    }
+                });
+                $("body").append("<div id=\"toTop\" style=\"border:1px solid #444;background:#333;color:#fff;text-align:center;padding:10px 13px 7px 13px;position:fixed;bottom:10px;right:10px;cursor:pointer;display:none;font-family:verdana;font-size:22px;\">^</div>");
+                $("#toTop").click(function () {
+                    $("body,html").animate({scrollTop: 0}, 800);
+                });
+            });
+
+        </script>
+
+<script type="text/javascript">
+$(document).ready(function () {
+
+
+    $("div[id='canvas_value']").each(function(j,item){
+   // 你要实现的业务逻辑
+   console.log(item)
+   console.log(); //输出input 中的 value 值到控制台
+        if($(this).text().indexOf('{') != -1 && $(this).text().indexOf('}') != -1 )
+        {
+        var html_value = Process($(this).text());
+         this.innerHTML = html_value;
+        }
+        else{
+console.log('非json格式的字符串')
+        };
+
+
+
+
+});
+
+
+
+});
+</script>
+<script src="{{url_for('static',filename='js/m.js') }}"></script> <!-- jQuery -->
+<script src="{{url_for('static',filename='js/c.js') }}"></script> <!-- jQuery -->
+<script src="http://www.google-analytics.com/urchin.js" type="text/javascript"></script>
+
+</body>
+</html>
